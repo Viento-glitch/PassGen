@@ -1,0 +1,8 @@
+1. Select the profile to select a text file with links sites.
+2. Select mission to understand what program must do.
+3. Select site to do selected mission.
+3.1 Try find site in file with links.
+4. Request Key.
+5. Make salt for future password.
+6. Change litters on key with Cesar cipher.
+7. Create password with salt, Cesar cipher, site.
