@@ -8,43 +8,58 @@ import java.util.Locale;
 
 class CesarCipher {
 
-    public static String execute(String translatedText, int selectedIndex) {
+    public static String execute(String translatedText, int selectedIndex) throws Exception {
         ArrayList<Character> alphabet = getAlphabet(translatedText);
         return encrypt(translatedText, selectedIndex);
     }
 
     public static ArrayList<Character> getAlphabet(String translatedText) {
-        if (!isNumeric(translatedText)) {
+        try {
+            if (translatedText.isEmpty()) {
 
-            ArrayList<Character> rusLetters = getRusLetters();
-            ArrayList<Character> engLetters = getEngLetters();
+                throw new Exception("Обнаружено пустое поле");
 
-            String upperCasedText = translatedText.toUpperCase();
-            ArrayList<Character> alphabet = null;
-
-
-            for (int i = 0; i < upperCasedText.length(); i++) {
-                char c = upperCasedText.charAt(i);
-                if (engLetters.contains(c)) {
-                    alphabet = engLetters;
-                    break;
-                }
-                if (rusLetters.contains(c)) {
-                    alphabet = rusLetters;
-                    break;
-                }
-            }
-
-            if (alphabet == null) {
-                throw new RuntimeException("Алфавит не обнаружен.");
             } else {
-                return alphabet;
+                if (!isNumeric(translatedText)) {
+
+                    ArrayList<Character> rusLetters = getRusLetters();
+                    ArrayList<Character> engLetters = getEngLetters();
+
+                    String upperCasedText = translatedText.toUpperCase();
+                    ArrayList<Character> alphabet = null;
+
+
+                    for (int i = 0; i < upperCasedText.length(); i++) {
+                        char c = upperCasedText.charAt(i);
+                        if (engLetters.contains(c)) {
+                            alphabet = engLetters;
+                            break;
+                        }
+                        if (rusLetters.contains(c)) {
+                            alphabet = rusLetters;
+                            break;
+                        }
+                    }
+
+                    if (alphabet == null) {
+                        throw new Exception("Алфавит не обнаружен.");
+                    } else {
+                        return alphabet;
+                    }
+
+                } else {
+                    throw new RuntimeException("Ваш ключ не содержит букв английского и русского алфавита.\n " +
+                            "Ключ подобного рода не подходит.");
+                }
             }
 
-        } else {
-            throw new RuntimeException("Ваш ключ не содержит букв английского и русского алфавита.\n " +
-                    "Ключ подобного рода не подходит.");
+
+        } catch (
+                Exception e) {
+            System.out.println(e);
+
         }
+        return null;
     }
 
 
