@@ -92,11 +92,6 @@ public class AES {
         return null;
     }
 
-    public static void main(String args[]) {
-//        execute();
-
-    }
-
     static String execute(String strPssword, String strToEncrypt) {
 //        strToEncrypt = "My text to encrypt";
 //        strPssword = "encryptor key";

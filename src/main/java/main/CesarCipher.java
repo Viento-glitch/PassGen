@@ -62,7 +62,7 @@ class CesarCipher {
         return null;
     }
 
-
+//! Добавить проверки всем методам требующим 
     private static boolean isNumeric(String translatedText) {
         try {
             Integer.parseInt(translatedText);
