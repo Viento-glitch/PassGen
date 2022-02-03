@@ -1,15 +1,12 @@
 package main;
 
-import java.io.IOException;
-import java.io.ObjectInputFilter;
 import java.util.ArrayList;
 import java.util.Locale;
 
 
 class CesarCipher {
 
-    public static String execute(String translatedText, int selectedIndex) throws Exception {
-        ArrayList<Character> alphabet = getAlphabet(translatedText);
+    public static String execute(String translatedText, int selectedIndex) throws CesarException {
         return encrypt(translatedText, selectedIndex);
     }
 
@@ -62,7 +59,7 @@ class CesarCipher {
         return null;
     }
 
-//! Добавить проверки всем методам требующим 
+    //! Добавить проверки всем методам требующим
     private static boolean isNumeric(String translatedText) {
         try {
             Integer.parseInt(translatedText);
@@ -72,22 +69,20 @@ class CesarCipher {
         }
     }
 
-    static String encrypt(String text, int p) {
+    static String encrypt(String text, int p) throws CesarException {
         ArrayList<Character> alphabet = getAlphabet(text);
         text = text.toUpperCase(Locale.ROOT);
 
         ArrayList<Integer> numbersOfCodedCharacters = new ArrayList<>();//список цифр равный зашифрованным символам
         for (int i = 0; i < text.length(); i++) {
             final char currentCharacterBeingChecked = text.charAt(i);
+            assert alphabet != null;
             if (alphabet.contains(currentCharacterBeingChecked)) {
                 for (int j = 0; j < alphabet.size(); j++) {
                     if (currentCharacterBeingChecked == ' ') {
                         numbersOfCodedCharacters.add(-1);
-                        break;
-                    }
-                    if (currentCharacterBeingChecked == alphabet.get(j)) {
+                    } else if (currentCharacterBeingChecked == alphabet.get(j)) {
                         numbersOfCodedCharacters.add(j);
-                        break;
                     }
                     if (j + 1 == alphabet.size()) {
                         System.out.println("Символ не был обнаружен в алфавите! искомый символ =" + currentCharacterBeingChecked);
@@ -117,7 +112,7 @@ class CesarCipher {
         } else if (p != 0) {
             positivityIndex = p;
         } else {
-            throw new RuntimeException("Обнаружен 0 переданом значении для смещения индекса");
+            throw new CesarException("Обнаружен 0 переданом значении для смещения индекса");
 
         }
         return resultArray.get(positivityIndex);

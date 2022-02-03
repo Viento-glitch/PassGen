@@ -9,17 +9,29 @@ public class PassGenTest {
 
     @Test
     public void testTakeLettersFrom() {
-        Assert.assertEquals("Test", PassGen.getLettersFrom("12Test3251234"));
+        try {
+            Assert.assertEquals("Test", PassGen.getLettersFrom("12Test3251234"));
+        } catch (GenException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
     public void testTakeNumbersFrom() {
-        Assert.assertEquals("123251234", PassGen.getNumbersFrom("12Test3251234"));
+        try {
+            Assert.assertEquals("123251234", PassGen.getNumbersFrom("12Test3251234"));
+        } catch (GenException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test(expected = Exception.class)
     public void testTakeNumbersFromNullValues() {
-        Assert.assertEquals(null, PassGen.getNumbersFrom(""));
+        try {
+            Assert.assertEquals(null, PassGen.getNumbersFrom(""));
+        } catch (GenException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
