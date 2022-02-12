@@ -72,10 +72,18 @@ public class CaesarCipherTest {
     }
 
     @Test
+    public void testLengthPassword() throws Exception {
+        Random random = new Random();
+        String key = "abasd" + random.nextInt();
+        String site = "site" + random.nextInt() + ".com";
+        Assert.assertTrue(PassGen.executeEncrypting(site, key).length() <= 30);
+    }
+
+    @Test
     public void testConstantOutputWithEqualInput() throws Exception {
         String key = "abasd123132";
         String site = "site.com";
-        Assert.assertEquals("ZLRwOcaOzBHfF+UkrZ+5XvImhL6P4=",PassGen.executeEncrypting(site, key));
+        Assert.assertEquals("ZLRwOcaOzBHfF+UkrZ+5XvImhL6P4=", PassGen.executeEncrypting(site, key));
     }
 
 }
