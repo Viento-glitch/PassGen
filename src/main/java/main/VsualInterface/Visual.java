@@ -38,7 +38,7 @@ public class Visual extends JFrame {
             String site = inputSite.getText();
             String result = "";
             try {
-                result = PassGen.executeEncrypting(key, site);
+                result = PassGen.executeEncrypting(site, key);
                 JOptionPane.showMessageDialog(null, "Пароль скопирован в Буффер обмена", "Output", JOptionPane.PLAIN_MESSAGE);
             } catch (Exception exception) {
                 error(exception);
@@ -46,7 +46,7 @@ public class Visual extends JFrame {
             copy(result);
         }
 
-        public  void error(Exception message) {
+        public void error(Exception message) {
             JOptionPane.showMessageDialog(null, message, "Ошибка", JOptionPane.ERROR_MESSAGE);
         }
 

@@ -36,7 +36,7 @@ public class PassGenTest {
 
     @Test
     public void testGetNumberToMoveCesar() {
-        ArrayList<Character> alphabet = CesarCipher.getEngLetters();
+        ArrayList<Character> alphabet = CaesarCipher.getEngLetters();
         String numbersFromTheKey = "1000";
         Assert.assertEquals(4, PassGen.getNumberToMoveCesar(alphabet, numbersFromTheKey));
     }

@@ -2,10 +2,10 @@ package main;
 
 import main.VsualInterface.Visual;
 
-import java.util.ArrayList;
+import java.util.List;
 
-import static main.CesarCipher.encrypt;
-import static main.CesarCipher.getAlphabet;
+import static main.CaesarCipher.encrypt;
+import static main.CaesarCipher.getAlphabet;
 
 public class PassGen {
     public static void main(String[] args) {
@@ -13,56 +13,77 @@ public class PassGen {
         frame.setVisible(true);
     }
 
-    public static String executeEncrypting(String key, String selectedSite) throws GenException {
+    public static String executeEncrypting(String selectedSite, String key) throws GenException {
         try {
-            String numbersFromTheKey = getNumbersFrom(key);
-
-            int firstNumber = getNumber(numbersFromTheKey, 0);
-            int lastNumber = getNumber(numbersFromTheKey, numbersFromTheKey.length() - 1);
-
-            String pass = getPassReadyToAES(selectedSite, numbersFromTheKey, key, firstNumber + lastNumber);
-            return AES.execute(key, pass);
+            String pass = getPassReadyToAES(selectedSite, key);
+            String result = AES.execute(key, pass);
+            return upgradeEncryptedPass(pass, result);
         } catch (GenException e) {
             throw new GenException("Не удалось выполнить шифрование", e);
         }
     }
 
-    private static String getPassReadyToAES(String selectedSite, String numbersFromTheKey, String key, int i) throws GenException {
-        String lettersFromTheKey = getLettersFrom(key);
-        String salt = getSalt(numbersFromTheKey, lettersFromTheKey);
-        StringBuilder result = new StringBuilder();
+    private static String upgradeEncryptedPass(String pass, String result) {
+        while (true) {
+            int specSymbolCounter = countSpecSymbol(result);
+            if (checkSpecSymbol(result) && result.length() <= 30 && specSymbolCounter > 2) {
+                return result;
+            } else {
+                result = AES.execute(result, pass);
+                if (result.length() > 30) {
+                    result = result.substring(result.length() - 30);
+                }
+            }
+        }
+    }
+
+    static int countSpecSymbol(String result) {
+        int number = 0;
+        for (int i = 0; i < result.length(); i++) {
+            if (isSpecSymbol(result.charAt(i))) {
+                number++;
+            }
+        }
+        return number;
+    }
+
+    private static boolean isSpecSymbol(char symbol) {
+        return CaesarCipher.notFoundInAlphabet(symbol) && !Character.isDigit(symbol);
+    }
+
+    private static boolean checkSpecSymbol(String text) {
+        for (int i = 0; i < text.length(); i++) {
+            char symbol = text.charAt(i);
+            if (CaesarCipher.notFoundInAlphabet(symbol) && !Character.isDigit(symbol)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static String getPassReadyToAES(String selectedSite, String key) throws GenException {
+        String numbersFromTheKey = getNumbersFrom(key);
+        String result;
         try {
             if (checkSite(selectedSite)) {
-                generatePassWithSalt(selectedSite, salt, numbersFromTheKey, i, result);
+                result = generatePassWithSalt(selectedSite, numbersFromTheKey);
+
             } else {
                 throw new InputException("Ввёдённое значение не является сайтом");
             }
-            return encrypt(result.toString(), result.length() / 3);
-        } catch (CesarException | InputException e) {
+            return encrypt(result, result.length() / 3);
+        } catch (CaesarException | InputException e) {
             throw new GenException("Неудалось создать пароль", e);
         }
     }
 
-    private static void generatePassWithSalt(String selectedSite, String salt, String numbersFromTheKey, int number, StringBuilder result) {
-        int countSalt = 0;
-        for (int j = 0; j < selectedSite.length(); j++) {
-            if (countSalt == 0) {
-                result.append(numbersFromTheKey.charAt(0));
-            }
-            countSalt++;
-            if (j % number == 2) {
-                result.append(salt);
-            }
-            if (number == j) {
-                result.append(salt);
-            }
-            result.append(selectedSite.charAt(j));
-            if (countSalt < 2) {
-                while (salt.length() < number) {
-                    salt += number;
-                }
-            }
+
+    private static String generatePassWithSalt(String key, String site) throws GenException {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < site.length() / 3; i++) {
+            result.append(getSalt(key + site + result));
         }
+        return result.toString();
     }
 
     static boolean checkSite(String selectedSite) {
@@ -76,7 +97,7 @@ public class PassGen {
         return Integer.parseInt(String.valueOf(numberFromTheKey.charAt(i)));
     }
 
-    static int getNumberToMoveCesar(ArrayList<Character> alphabet, String numbersFromTheKey) {
+    static int getNumberToMoveCesar(List<Character> alphabet, String numbersFromTheKey) {
         int firstNumber = 0;
         int lastNumber = 0;
 
@@ -135,10 +156,12 @@ public class PassGen {
         return number;
     }
 
-    private static String getSalt(String numberFromTheKey, String lettersFromTheKey) throws GenException {
+    private static String getSalt(String key) throws GenException {
+        String lettersFromTheKey = getLettersFrom(key);
+        String numberFromTheKey = getNumbersFrom(key);
         try {
-            return CesarCipher.execute(lettersFromTheKey, getNumberToMoveCesar(getAlphabet(lettersFromTheKey), numberFromTheKey));
-        } catch (CesarException e) {
+            return CaesarCipher.encrypt(lettersFromTheKey, getNumberToMoveCesar(getAlphabet(lettersFromTheKey), numberFromTheKey));
+        } catch (CaesarException e) {
             throw new GenException("Неудалось создоть соль", e);
         }
     }
